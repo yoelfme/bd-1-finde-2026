@@ -1,12 +1,617 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proyecto Final - Bases de Datos 1</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git al día — comandos esenciales</title>
+  <meta name="description" content="Guía corta de Git y GitHub: status, add, commit, push, pull y más, con diagramas claros.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #e9eef4;
+      --ink: #15202b;
+      --muted: #5c6b7a;
+      --line: #c5d0db;
+      --surface: #f7fafc;
+      --accent: #e85d04;
+      --accent-soft: #ffe8d6;
+      --teal: #0f766e;
+      --teal-soft: #d7f0ed;
+      --code-bg: #1c2a38;
+      --code-fg: #d9e4ef;
+      --shadow: 0 18px 40px rgba(21, 32, 43, 0.08);
+      --radius: 14px;
+      --max: 760px;
+      --font-display: "Bricolage Grotesque", sans-serif;
+      --font-body: "Atkinson Hyperlegible", Georgia, serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 1.0625rem;
+      line-height: 1.65;
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(rgba(21, 32, 43, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(21, 32, 43, 0.035) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 45% at 10% -10%, rgba(232, 93, 4, 0.12), transparent 55%),
+        radial-gradient(ellipse 55% 40% at 95% 5%, rgba(15, 118, 110, 0.1), transparent 50%);
+      z-index: 0;
+    }
+
+    a {
+      color: var(--teal);
+    }
+
+    a:focus-visible,
+    .btn:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 2rem, var(--max));
+      margin-inline: auto;
+    }
+
+    /* —— Hero —— */
+    .hero {
+      min-height: 100svh;
+      display: grid;
+      align-content: center;
+      padding: 3.5rem 0 2.5rem;
+      gap: 1.75rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      opacity: 0;
+      animation: rise 0.7s ease both;
+    }
+
+    .brand-mark {
+      width: 1.65rem;
+      height: 1.65rem;
+      border-radius: 6px;
+      background: var(--ink);
+      color: var(--paper);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 8vw, 3.6rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      font-weight: 700;
+      max-width: 12ch;
+      opacity: 0;
+      animation: rise 0.7s ease 0.08s both;
+    }
+
+    .hero-lead {
+      margin: 0;
+      max-width: 36ch;
+      color: var(--muted);
+      font-size: 1.125rem;
+      opacity: 0;
+      animation: rise 0.7s ease 0.16s both;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      width: fit-content;
+      padding: 0.7rem 1.1rem;
+      border-radius: 999px;
+      background: var(--ink);
+      color: var(--paper);
+      text-decoration: none;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: transform 0.2s ease, background 0.2s ease;
+      opacity: 0;
+      animation: rise 0.7s ease 0.24s both;
+    }
+
+    .btn:hover {
+      background: var(--teal);
+      transform: translateY(-1px);
+    }
+
+    .btn span {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    /* —— Mermaid diagrams —— */
+    .diagram-board {
+      margin-top: 0.5rem;
+      padding: 1rem 0.75rem 0.75rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+    }
+
+    .hero .diagram-board {
+      opacity: 0;
+      animation: rise 0.8s ease 0.32s both;
+    }
+
+    .diagram-board + .diagram-board,
+    .section-intro + .diagram-board {
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .diagram-label {
+      margin: 0 0 0.65rem 0.35rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .diagram-board .mermaid {
+      display: flex;
+      justify-content: center;
+      min-width: min(100%, 640px);
+    }
+
+    .diagram-board svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* —— Sections —— */
+    section {
+      padding: 2.75rem 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-kicker {
+      margin: 0 0 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    h2 {
+      margin: 0 0 0.75rem;
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 4vw, 2rem);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+
+    .section-intro {
+      margin: 0 0 1.5rem;
+      color: var(--muted);
+      max-width: 48ch;
+    }
+
+    /* —— Command list —— */
+    .cmd-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .cmd-list li {
+      display: grid;
+      gap: 0.35rem;
+      padding: 1rem 0.15rem;
+      border-bottom: 1px solid var(--line);
+      transition: background 0.2s ease, padding-left 0.2s ease;
+    }
+
+    .cmd-list li:hover {
+      background: rgba(255, 255, 255, 0.55);
+      padding-left: 0.4rem;
+    }
+
+    .cmd-list code {
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    .cmd-list p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .remote-cmds {
+      margin-top: 1.5rem;
+    }
+
+    /* —— Tip —— */
+    .tip {
+      margin-top: 1.5rem;
+      padding: 1rem 1.1rem;
+      border-left: 3px solid var(--accent);
+      background: var(--accent-soft);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 0.98rem;
+    }
+
+    .tip strong {
+      font-family: var(--font-display);
+    }
+
+    footer {
+      padding: 2rem 0 3rem;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    footer p {
+      margin: 0;
+    }
+
+    footer .name {
+      color: var(--ink);
+      font-family: var(--font-display);
+      font-weight: 600;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .brand,
+      .hero h1,
+      .hero-lead,
+      .btn,
+      .hero .diagram-board {
+        animation: none;
+        opacity: 1;
+      }
+    }
+  </style>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "base",
+      securityLevel: "strict",
+      flowchart: {
+        curve: "basis",
+        padding: 16,
+        nodeSpacing: 36,
+        rankSpacing: 40,
+        htmlLabels: true,
+      },
+      sequence: {
+        actorMargin: 48,
+        messageMargin: 36,
+        mirrorActors: false,
+        useMaxWidth: true,
+      },
+      themeVariables: {
+        fontFamily: "Atkinson Hyperlegible, Georgia, serif",
+        fontSize: "15px",
+        primaryColor: "#d7f0ed",
+        primaryTextColor: "#15202b",
+        primaryBorderColor: "#0f766e",
+        secondaryColor: "#ffe8d6",
+        secondaryTextColor: "#15202b",
+        secondaryBorderColor: "#e85d04",
+        tertiaryColor: "#e9eef4",
+        tertiaryTextColor: "#15202b",
+        tertiaryBorderColor: "#c5d0db",
+        lineColor: "#5c6b7a",
+        textColor: "#15202b",
+        mainBkg: "#f7fafc",
+        nodeBorder: "#0f766e",
+        clusterBkg: "#f0f5f8",
+        clusterBorder: "#c5d0db",
+        titleColor: "#5c6b7a",
+        actorBkg: "#d7f0ed",
+        actorBorder: "#0f766e",
+        actorTextColor: "#15202b",
+        actorLineColor: "#c5d0db",
+        signalColor: "#15202b",
+        signalTextColor: "#15202b",
+        labelBoxBkgColor: "#ffe8d6",
+        labelBoxBorderColor: "#e85d04",
+        labelTextColor: "#15202b",
+        loopTextColor: "#5c6b7a",
+        activationBkgColor: "#ffe8d6",
+        activationBorderColor: "#e85d04",
+        sequenceNumberColor: "#f7fafc",
+      },
+    });
+  </script>
 </head>
 <body>
-    <h1>Proyecto Final - Bases de Datos 1</h1>
-    <h2>Realizado por: <strong>Yoel Monzón</strong></h2>
+  <main>
+    <header class="hero wrap">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">g$</span>
+        Git al día
+      </div>
+      <h1>Los comandos de Git que sí vas a usar</h1>
+      <p class="hero-lead">
+        Una guía corta para guardar tu trabajo, ver qué cambió y compartirlo con tu equipo en GitHub.
+      </p>
+      <a class="btn" href="#flujo">
+        Ver el recorrido
+        <span>↓</span>
+      </a>
+
+      <figure class="diagram-board" aria-label="Recorrido básico de Git en tu computadora">
+        <p class="diagram-label">En tu computadora → GitHub</p>
+        <pre class="mermaid">
+flowchart LR
+  subgraph local["Jerarquía local"]
+    direction LR
+    init["git init"] --> wt["Área de trabajo"]
+    wt -->|"git add"| stage["Área de preparación"]
+    stage -->|"git commit"| hist["Historial local"]
+  end
+  hist -->|"git push"| gh["GitHub"]
+  wt -.->|"status / diff"| wt
+  hist -.->|"git show"| hist
+
+  classDef start fill:#e9eef4,stroke:#5c6b7a,color:#15202b
+  classDef zone fill:#d7f0ed,stroke:#0f766e,color:#15202b
+  classDef save fill:#ffe8d6,stroke:#e85d04,color:#15202b
+  classDef remote fill:#1c2a38,stroke:#1c2a38,color:#d9e4ef
+  class init start
+  class wt,stage zone
+  class hist save
+  class gh remote
+        </pre>
+      </figure>
+    </header>
+
+    <section class="wrap" id="flujo">
+      <p class="section-kicker">Paso a paso</p>
+      <h2>Cómo fluye el trabajo con Git</h2>
+      <p class="section-intro">
+        Piensa en Git como un álbum de fotos de tu proyecto: primero miras qué cambió, luego eliges qué guardar y al final dejas una foto con un mensaje claro.
+      </p>
+
+      <figure class="diagram-board" aria-label="Jerarquía local de Git y comandos">
+        <p class="diagram-label">Relación entre áreas y comandos</p>
+        <pre class="mermaid">
+flowchart TB
+  init["git init<br/>prepara el historial una vez"] --> wt
+
+  subgraph pipeline["Camino de un cambio"]
+    direction LR
+    wt["Área de trabajo<br/>archivos que editas"]
+    stage["Área de preparación<br/>lo listo para guardar"]
+    hist["Historial local<br/>versiones con mensaje"]
+    wt -->|"git add"| stage
+    stage -->|"git commit"| hist
+  end
+
+  wt -.->|"git status<br/>git diff"| look["Revisas antes de guardar"]
+  hist -.->|"git show"| review["Revisas un commit guardado"]
+  hist -->|"git push"| gh["GitHub"]
+
+  classDef zone fill:#d7f0ed,stroke:#0f766e,color:#15202b
+  classDef save fill:#ffe8d6,stroke:#e85d04,color:#15202b
+  classDef peek fill:#e9eef4,stroke:#5c6b7a,color:#15202b
+  classDef cloud fill:#1c2a38,stroke:#1c2a38,color:#d9e4ef
+  class init,wt,stage zone
+  class hist save
+  class look,review peek
+  class gh cloud
+        </pre>
+      </figure>
+
+      <ol class="cmd-list">
+        <li>
+          <code>git init</code>
+          <p>Prepara la carpeta para que Git pueda recordar el historial. Solo se hace una vez al empezar.</p>
+        </li>
+        <li>
+          <code>git status</code>
+          <p>Te muestra el estado actual: qué archivos son nuevos, cuáles editaste y cuáles ya están listos para guardar.</p>
+        </li>
+        <li>
+          <code>git diff</code>
+          <p>Enseña el detalle de los cambios: líneas que agregaste o borraste, antes de guardarlas.</p>
+        </li>
+        <li>
+          <code>git add</code>
+          <p>Elige qué cambios van en la próxima “foto”. Puedes agregar un archivo o varios.</p>
+        </li>
+        <li>
+          <code>git commit</code>
+          <p>Guarda esa foto en el historial con un mensaje corto que diga qué hiciste y por qué.</p>
+        </li>
+        <li>
+          <code>git show</code>
+          <p>Abre una foto ya guardada para revisar qué trajo ese commit.</p>
+        </li>
+      </ol>
+
+      <p class="tip">
+        <strong>Truco rápido:</strong> usa <code>status</code> y <code>diff</code> antes de cada <code>commit</code>. Así evitas guardar algo que no querías.
+      </p>
+    </section>
+
+    <section class="wrap" id="github">
+      <p class="section-kicker">Git + GitHub</p>
+      <h2>Cómo trabaja un equipo a distancia</h2>
+      <p class="section-intro">
+        Git vive en tu computadora. GitHub es el lugar en la nube donde el equipo deja la versión compartida del proyecto.
+      </p>
+
+      <figure class="diagram-board" aria-label="Cómo se conectan las copias locales con GitHub">
+        <p class="diagram-label">Equipo distribuido</p>
+        <pre class="mermaid">
+flowchart LR
+  tu["Tú<br/>copia local"]
+  gh["GitHub<br/>versión compartida"]
+  comp["Compañero/a<br/>copia local"]
+
+  tu -->|"push"| gh
+  gh -->|"pull / fetch"| tu
+  comp -->|"push"| gh
+  gh -->|"pull / fetch"| comp
+
+  classDef person fill:#d7f0ed,stroke:#0f766e,color:#15202b
+  classDef hub fill:#1c2a38,stroke:#1c2a38,color:#d9e4ef
+  class tu,comp person
+  class gh hub
+        </pre>
+      </figure>
+
+      <figure class="diagram-board" aria-label="Secuencia típica de trabajo en equipo con GitHub">
+        <p class="diagram-label">Una mañana de trabajo en equipo</p>
+        <pre class="mermaid">
+sequenceDiagram
+  actor Tu as Tú
+  participant GH as GitHub
+  actor Comp as Compañero/a
+
+  Tu->>GH: pull (traer lo nuevo)
+  Note over Tu: status → add → commit
+  Tu->>GH: push (publicar)
+  Comp->>GH: fetch (solo mirar)
+  Comp->>GH: pull (integrar)
+  Comp->>GH: push
+  Tu->>GH: pull (sincronizar)
+        </pre>
+      </figure>
+
+      <div class="remote-cmds">
+        <ol class="cmd-list">
+          <li>
+            <code>git push</code>
+            <p>Sube tus commits a GitHub para que el resto del equipo los vea.</p>
+          </li>
+          <li>
+            <code>git fetch</code>
+            <p>Pregunta a GitHub si hay novedades y las descarga, pero no las mezcla todavía con tu trabajo.</p>
+          </li>
+          <li>
+            <code>git pull</code>
+            <p>Trae los cambios de GitHub y los aplica a tu copia. Es “fetch + integrar” en un solo paso.</p>
+          </li>
+        </ol>
+      </div>
+
+      <p class="tip">
+        <strong>Rutina de equipo:</strong> empieza el día con <code>pull</code>, trabaja, guarda con <code>commit</code> y termina con <code>push</code>. Así todos ven la misma versión.
+      </p>
+    </section>
+
+    <section class="wrap" id="resumen">
+      <p class="section-kicker">Para llevar</p>
+      <h2>Mapa rápido de comandos</h2>
+      <p class="section-intro">
+        Una hoja de atajos cuando no recuerdes qué comando usar.
+      </p>
+      <ul class="cmd-list">
+        <li>
+          <code>init</code>
+          <p>Arrancar el historial del proyecto.</p>
+        </li>
+        <li>
+          <code>status</code>
+          <p>Ver el panorama: qué está pendiente.</p>
+        </li>
+        <li>
+          <code>diff</code>
+          <p>Mirar el detalle de los cambios.</p>
+        </li>
+        <li>
+          <code>add</code>
+          <p>Elegir qué va en el próximo guardado.</p>
+        </li>
+        <li>
+          <code>commit</code>
+          <p>Guardar una versión con mensaje.</p>
+        </li>
+        <li>
+          <code>show</code>
+          <p>Revisar un commit ya guardado.</p>
+        </li>
+        <li>
+          <code>push</code>
+          <p>Subir tu trabajo a GitHub.</p>
+        </li>
+        <li>
+          <code>fetch</code>
+          <p>Enterarte de novedades sin aplicarlas aún.</p>
+        </li>
+        <li>
+          <code>pull</code>
+          <p>Traer e integrar lo nuevo del equipo.</p>
+        </li>
+      </ul>
+    </section>
+
+    <footer class="wrap">
+      <p>
+        Material educativo · <span class="name">Yoel Monzón</span>
+      </p>
+    </footer>
+  </main>
 </body>
 </html>
